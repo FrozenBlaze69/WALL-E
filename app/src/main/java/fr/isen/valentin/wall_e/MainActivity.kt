@@ -67,3 +67,4 @@ fun HomeScreen() {
         Text(text = "Bienvenue sur l'accueil de vos prises connectées ! 🧗‍♂️")
     }
 }
+

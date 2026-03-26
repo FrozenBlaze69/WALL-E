@@ -96,48 +96,83 @@ fun QrScannerView(onQrScanned: (String) -> Unit) {
 @Composable
 fun RoomTracksScreen(roomNumber: String, onBack: () -> Unit) {
     val db = FirebaseFirestore.getInstance()
+    // Liste des parcours récupérés
     var tracks by remember { mutableStateOf<List<Map<String, Any>>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
+    var messageAction by remember { mutableStateOf("") }
 
-    // On va chercher les pistes dans Firestore qui correspondent à la salle
+    // Charger les données depuis Firestore
     LaunchedEffect(roomNumber) {
-        db.collection("climbingRoutes")
-            .whereEqualTo("salle", roomNumber) // Filtre par numéro de salle
+        db.collection("parcours")
             .get()
             .addOnSuccessListener { result ->
                 tracks = result.documents.map { it.data ?: emptyMap() }
                 isLoading = false
             }
+            .addOnFailureListener {
+                isLoading = false
+            }
     }
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+        // Barre de retour
         Row(verticalAlignment = Alignment.CenterVertically) {
             Button(onClick = onBack) { Text("<") }
             Spacer(modifier = Modifier.width(16.dp))
-            Text("Pistes - Salle $roomNumber", style = MaterialTheme.typography.headlineMedium)
+            Text("Salle $roomNumber : Parcours", style = MaterialTheme.typography.headlineSmall)
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         if (isLoading) {
             CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
         } else if (tracks.isEmpty()) {
-            Text("Aucune piste trouvée pour cette salle.")
+            Text("Aucun parcours trouvé pour cette salle dans Firebase.")
         } else {
+            // Affichage du message d'activation
+            if (messageAction.isNotEmpty()) {
+                Text(messageAction, color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(bottom = 8.dp))
+            }
+
+            // Liste des parcours
             LazyColumn {
                 items(tracks) { track ->
+                    val trackName = track["nom"]?.toString() ?: "Sans nom"
+                    val difficulty = track["difficulte"]?.toString() ?: "Inconnue"
+
                     Card(
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp).clickable {
-                            /* Prochaine étape : Connexion BLE au mur */
-                        }
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp)
+                            .clickable {
+                                // ACTION : Quand on clique sur le parcours
+                                messageAction = "🚀 Activation de : $trackName ..."
+                                activerParcours(track)
+                            },
+                        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                     ) {
-                        Column(modifier = Modifier.padding(16.dp)) {
-                            Text(text = "Nom : ${track["nom"] ?: "Inconnu"}", style = MaterialTheme.typography.titleLarge)
-                            Text(text = "Difficulté : ${track["difficulte"] ?: "N/A"}")
+                        Row(
+                            modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Column {
+                                Text(text = trackName, style = MaterialTheme.typography.titleMedium)
+                                Text(text = "Difficulté : $difficulty", style = MaterialTheme.typography.bodyMedium)
+                            }
+                            // Un petit indicateur visuel (ex: couleur selon difficulté)
+                            Box(modifier = Modifier.size(12.dp).background(Color.Green, shape = MaterialTheme.shapes.small))
                         }
                     }
                 }
             }
         }
     }
+}
+
+// Fonction pour simuler l'activation (On y mettra le Bluetooth plus tard)
+fun activerParcours(track: Map<String, Any>) {
+    val trackId = track["id"] ?: "N/A"
+    // Ici, tu enverras les données via Bluetooth au mur d'escalade
+    println("LOG: Envoi du signal Bluetooth pour le parcours $trackId")
 }
