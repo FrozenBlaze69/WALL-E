@@ -104,3 +104,4 @@ fun SimpleAuthTestScreen(onSuccess: () -> Unit) { // Ajout du paramètre onSucce
         Text(text = resultMessage)
     }
 }
+
