@@ -1,15 +1,13 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    // Retire le "//" devant alias et ajoute la ligne id :
+    id("com.google.gms.google-services")
 }
 
 android {
     namespace = "fr.isen.valentin.wall_e"
-    compileSdk {
-        version = release(36) {
-            minorApiLevel = 1
-        }
-    }
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "fr.isen.valentin.wall_e"
@@ -48,6 +46,22 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
+    implementation(libs.google.generativeai)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.camera.core)
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.view)
+    implementation(libs.barcode.scanning)
+    // Firebase BoM (tu l'as déjà)
+    implementation(platform("com.google.firebase:firebase-bom:33.10.0"))
+
+    // Auth (tu l'as déjà)
+    implementation("com.google.firebase:firebase-auth")
+
+    // NOUVEAU : Ajouter Firestore
+    implementation("com.google.firebase:firebase-firestore")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -56,3 +70,4 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 }
+

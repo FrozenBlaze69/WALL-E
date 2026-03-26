@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "569326069122",
+    "project_id": "studio-6448597095-220d5",
+    "storage_bucket": "studio-6448597095-220d5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:569326069122:android:47d4344bef7d01e77bdb9b",
+        "android_client_info": {
+          "package_name": "fr.isen.valentin.wall_e"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBURy4SLTpO0Emy4cyniyZWylfuAapR4jA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
