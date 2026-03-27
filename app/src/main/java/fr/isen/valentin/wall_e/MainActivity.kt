@@ -4,13 +4,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -38,33 +35,40 @@ class MainActivity : ComponentActivity() {
 fun ClimbingAppNavigation() {
     val navController = rememberNavController()
 
+    // Le NavHost contient toutes nos pages comme un livre
     NavHost(navController = navController, startDestination = "login") {
 
+        // 1. PAGE DE CONNEXION
         composable("login") {
-            // On appelle le LoginScreen qu'on a créé précédemment
             LoginScreen(
                 onNavigateToHome = {
-                    // Action de navigation vers l'accueil
-                    navController.navigate("home") {
+                    // Quand on se connecte, on va au scanner et on empêche le retour en arrière
+                    navController.navigate("scanner") {
                         popUpTo("login") { inclusive = true }
                     }
                 }
             )
         }
 
-        composable("home") {
-            HomeScreen()
+        // 2. PAGE DU SCANNER
+        composable("scanner") {
+            QrScannerScreen(
+                onQrScanned = { scannedData ->
+                    // Dès que la caméra lit un QR Code, on va sur la page des parcours !
+                    // (Plus tard, on pourra utiliser "scannedData" pour filtrer la bonne salle)
+                    navController.navigate("routes")
+                }
+            )
+        }
+
+        // 3. PAGE DES VOIES (Routes)
+        composable("routes") {
+            RoutesScreen(
+                onBackClick = {
+                    // Si on clique sur la flèche retour en haut à gauche, on retourne au scanner
+                    navController.popBackStack()
+                }
+            )
         }
     }
 }
-
-@Composable
-fun HomeScreen() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(text = "Bienvenue sur l'accueil de vos prises connectées ! 🧗‍♂️")
-    }
-}
-

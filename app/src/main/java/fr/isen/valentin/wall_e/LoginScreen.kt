@@ -19,6 +19,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 
 @Composable
 fun LoginScreen(
@@ -27,14 +29,18 @@ fun LoginScreen(
 ) {
     val email by viewModel.email.collectAsState()
     val password by viewModel.password.collectAsState()
-    val confirmPassword by viewModel.confirmPassword.collectAsState() // Le nouveau champ
+    val confirmPassword by viewModel.confirmPassword.collectAsState()
+    val message by viewModel.message.collectAsState()
 
     var isLoginMode by remember { mutableStateOf(true) }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
+            .background(MaterialTheme.colorScheme.background)
+            .verticalScroll(rememberScrollState())
+            .imePadding()
+            .systemBarsPadding(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // --- Image d'en-tête ---
@@ -201,12 +207,22 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(32.dp))
 
         // --- Bouton d'action ---
+        // --- Affichage des messages (Erreurs / Statut) ---
+        AnimatedVisibility(visible = message.isNotEmpty()) {
+            Text(
+                text = message,
+                color = if (message.startsWith("❌")) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+        }
+
+        // --- Bouton d'action ---
         Button(
             onClick = {
                 if (isLoginMode) {
                     viewModel.login(onSuccess = { onNavigateToHome() })
                 } else {
-                    // TODO: Logique d'inscription
+                    viewModel.signUp(onSuccess = { onNavigateToHome() }) // Appel de l'inscription !
                 }
             },
             modifier = Modifier

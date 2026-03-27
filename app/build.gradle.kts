@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
-    // Retire le "//" devant alias et ajoute la ligne id :
+    // Plugin ajouté par ton collègue pour Firebase
     id("com.google.gms.google-services")
 }
 
@@ -38,6 +38,7 @@ android {
 }
 
 dependencies {
+    // --- Dépendances de base Android & Compose ---
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -46,22 +47,23 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.foundation) // Ton ajout gardé
+
+    // --- Ajouts de ton collègue (Navigation, IA, Camera, Barcode) ---
+    implementation(libs.androidx.navigation.compose) // Remplace ton ancienne ligne de navigation
     implementation(libs.google.generativeai)
-    implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.camera.core)
     implementation(libs.androidx.camera.camera2)
     implementation(libs.androidx.camera.lifecycle)
     implementation(libs.androidx.camera.view)
     implementation(libs.barcode.scanning)
-    // Firebase BoM (tu l'as déjà)
+
+    // --- Ajouts de ton collègue (Firebase) ---
     implementation(platform("com.google.firebase:firebase-bom:33.10.0"))
-
-    // Auth (tu l'as déjà)
     implementation("com.google.firebase:firebase-auth")
-
-    // NOUVEAU : Ajouter Firestore
     implementation("com.google.firebase:firebase-firestore")
 
+    // --- Tests & Debug ---
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -69,5 +71,4 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
-    implementation("androidx.navigation:navigation-compose:2.8.5")
 }
